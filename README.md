@@ -1,5 +1,6 @@
 # snake_game
 all the relevant code is in main.py.
+the project is focused on the logic of the game and not about the beauty of the graphics.
 this project shows my ability to self learn new APIs such as pygame, 
 and the ability to take control over the logic behind the program,
 which in this case includes classes and interactions between them, loops and if statments and the use of a linked list data structure.
