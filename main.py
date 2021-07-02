@@ -34,7 +34,8 @@ class SnakeNode:
         self.pos = Vector2(x, y)
         self.next = None
         self.prev = None
-
+# the game board is actually a grid of blocks with the size BLOCK_SIZE
+# so the position to draw the node is the number of row and column in the grid * BLOCK_SIZE
     def draw_node(self):
         pos_x = int(self.pos.x * BLOCK_SIZE)
         pos_y = int(self.pos.y * BLOCK_SIZE)
@@ -42,6 +43,8 @@ class SnakeNode:
         pygame.draw.rect(screen, (70, 125, 125), node_rect)
 
 
+# in the snake class we have references to the head of the snake and to the tail
+# movement direction of the snake is represented as a vector 2D
 class Snake:
     def __init__(self, head_x, head_y):
         self.head = SnakeNode(head_x, head_y)
@@ -65,6 +68,8 @@ class Snake:
         node.prev = self.tail
         self.tail = node
 
+    # each movement requires running with a while loop over the snake from the head to the tail
+    # moving each node to the position where the previous node was and moving the head forward
     def move(self):
         if (self.update_eat == True):
             new_tail = SnakeNode(self.tail.pos.x, self.tail.pos.y)
@@ -77,6 +82,8 @@ class Snake:
         self.head.pos += self.direction
         self.update_eat = False
 
+# basically, drawing the snake means running over the linked list of nodes and drawing each one of them
+# the complicated part is to draw the picture of the head facing the right direction
     def draw_snake(self):
         pos_x = int(self.head.pos.x * BLOCK_SIZE)
         pos_y = int(self.head.pos.y * BLOCK_SIZE)
@@ -95,6 +102,7 @@ class Snake:
             cur.draw_node()
             cur = cur.next
 
+# method to check if the head intersects with one of the nodes of the body of the snake
     def check_if_intersects(self):
         cur = self.head.next
         while not (cur == None):
@@ -103,13 +111,14 @@ class Snake:
             cur = cur.next
         return False
 
+# method to check if the snake is going out of the screen
     def check_out_of_screen(self):
         if self.head.pos.x == 0 or self.head.pos.x >= 20:
             return True
         if self.head.pos.y == 0 or self.head.pos.y >= 25:
             return True
 
-
+# method to draw the grass, one square dark followed by one lighter, and so on
 def draw_grass():
     for x in range(0, 20):
         for y in range(0, 25):
@@ -126,7 +135,7 @@ pygame.init()
 screen = pygame.display.set_mode((400, 500))
 clock = pygame.time.Clock()
 
-
+# initializing all the game components
 def init_game():
     global nahash
     global fruits
@@ -152,12 +161,14 @@ def print_score():
     textsurface = myfont.render(text, False, (0, 0, 0))
     screen.blit(textsurface, (0, 0))
 
-
+# the main loop of the game
+# here we draw everything on the screen and react to events that the user make
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        # user pressing an arrow button changes the direction in which the snake move
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and not (nahash.direction == Vector2(0, 1)):
                 nahash.set_direction(Vector2(0, -1))
@@ -171,6 +182,7 @@ while run:
         if event.type == SCREEN_UPDATE:
             nahash.move()
 
+        # if the snake is out of the window or intersecting itself the game stops and restarts
         if nahash.check_if_intersects() or nahash.check_out_of_screen():
             nahash.draw_snake()
             for pri in fruits:
@@ -180,6 +192,7 @@ while run:
             pygame.time.wait(1500)
             init_game()
 
+# the snake going over a fruit resulting the snake to grow and the fruit to be reinitialized
         for pri in fruits:
             if nahash.head.pos == pri.pos:
                 pri.was_eaten()
@@ -199,8 +212,8 @@ def main():
     pass
 
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
     main()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
